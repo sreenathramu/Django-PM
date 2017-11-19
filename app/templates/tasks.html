@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}DjangoTrello{% endblock %}
+<!-- {% block menu %}{% include "Header/loginHeader.html" %}{% endblock %} -->
+{% block body %}
+
+{% block message %}{% include "messages.html" %}{% endblock %}
+
+
+<div class="panel panel-default">
+		<div class="panel-heading">Tasks
+			<a class="btn btn-default pull-right" data-toggle="modal" data-target="#myModal">
+				<span class="fa fa-plus-circle" aria-hidden="true"></span> New Task</a>
+		</div>
+		<div class="panel-body">
+      <div>
+        <h4>
+          <b>{{category.category_name}}</b>
+        </h4>
+        <h5><b>Description</b></h5>
+        <h4><i>{{category.description}}</i></h4>
+      </div>
+
+			<table class="table table-condensed" id="taskTable">
+				<thead>
+					<th>#</th>
+					<th>Title</th>
+					<th>Description</th>
+					<th>Actions</th>
+				</thead>
+				{% for row in task %}
+				<tr>
+					<td>{{forloop.counter}} </td>
+					<td>{{row.task_title}}</td>
+					<td style="word-wrap:break-word">{{row.task_description}}</td>
+					<td>
+						<div class="dropdown">
+							<button class="btn btn-default dropdown-toggle" type="button" id="menu{{ forloop.counter }}" data-toggle="dropdown">Actions
+								<span class="caret"></span></button>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+									<li role="presentation"><a role="menuitem" 
+										onclick="moveTask({{row.id}})">Move to different Category</a>
+									</li>
+									<li role="presentation"><a role="menuitem" 
+										href="/app/delete/task/{{row.id}}">Delete</a></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+					{% endfor %}
+			</table>
+	</div>
+</div>
+
+
+<div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">New Task</h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="/app/category/{{category.id}}">{% csrf_token %}
+              {{form.non_field_errors}}
+              <div class="form-group">
+                 <label for="task_title">Title</label>
+				 <input type = "text" class="form-control" id="task_title"  name="task_title">
+              </div>
+              <div class="form-group">
+                <label for="task_description">Description</label>
+				<textarea class="form-control" id="task_description" 
+								name="task_description"></textarea>
+              </div>
+              <button type="submit" class="btn btn-default">Add</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div id="myModal1" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Move Task</h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="/app/move">{% csrf_token %}
+              <input type="hidden" name="taskHiddenId" id="taskHiddenId"/>
+              <input type="hidden" name="categoryHiddenId" id="categoryHiddenId" 
+              value="{{category.id}}"/>
+              <select name="category" id="category">
+              	{% for category in categoryList %}
+              		<option value="{{category.id}}">{{category.category_name}}</option>
+              	{% endfor %}
+              </select>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
