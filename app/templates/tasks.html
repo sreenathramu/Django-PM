@@ -26,6 +26,7 @@
 					<th>#</th>
 					<th>Title</th>
 					<th>Description</th>
+          <th>Priority</th>
 					<th>Actions</th>
 				</thead>
 				{% for row in task %}
@@ -33,16 +34,30 @@
 					<td>{{forloop.counter}} </td>
 					<td>{{row.task_title}}</td>
 					<td style="word-wrap:break-word">{{row.task_description}}</td>
+          <td>
+            {% if row.priority == 1 %}
+              <i class="fa fa-exclamation" aria-hidden="true"></i> Critical
+            {% elif row.priority == 2 %}
+              <i class="fa fa-ban" aria-hidden="true"></i> Blocker
+            {% elif row.priority == 3 %}
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Bug
+            {% else %}
+              <i class="fa fa-tasks" aria-hidden="true"></i> Task
+            {% endif %}
+          </td>
 					<td>
 						<div class="dropdown">
-							<button class="btn btn-default dropdown-toggle" type="button" id="menu{{ forloop.counter }}" data-toggle="dropdown">Actions
+							<button class="btn btn-default dropdown-toggle" type="button" 
+              id="menu{{ forloop.counter }}" data-toggle="dropdown">Actions
 								<span class="caret"></span></button>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
 									<li role="presentation"><a role="menuitem" 
 										onclick="moveTask({{row.id}})">Move to different Category</a>
 									</li>
 									<li role="presentation"><a role="menuitem" 
-										href="/app/delete/task/{{row.id}}">Delete</a></li>
+										href="/app/delete/task/{{category.id}}/{{row.id}}">Delete</a></li>
+                  <li role="presentation"><a role="menuitem" 
+                    onclick="editTask({{row.id}},{{row.priority}})">Edit Task</a></li>
 								</ul>
 							</div>
 						</td>
@@ -73,6 +88,15 @@
 				<textarea class="form-control" id="task_description" 
 								name="task_description"></textarea>
               </div>
+              <div class="form-group" style="width:150px">
+                <label for="task_priority">Task priority</label>
+                <select class="form-control" id="task_priority" name="task_priority">
+                  <option value="1" data-icon="fa fa-exclamation">Critical</option>
+                  <option value="2" data-icon="fa fa-ban">Blocker</option>
+                  <option value="3" data-icon="fa fa-exclamation-triangle">Bug</option>
+                  <option value="4" data-icon="fa fa-tasks">Task</option>
+                </select>
+              </div>
               <button type="submit" class="btn btn-default">Add</button>
             </form>
           </div>
@@ -93,15 +117,49 @@
               <input type="hidden" name="taskHiddenId" id="taskHiddenId"/>
               <input type="hidden" name="categoryHiddenId" id="categoryHiddenId" 
               value="{{category.id}}"/>
-              <select name="category" id="category">
+              <div class="form-group" style="width:150px">
+              <label for="task_priority">Select Category</label>
+              <select class="form-control" name="category" id="category" style="width:70px">
               	{% for category in categoryList %}
               		<option value="{{category.id}}">{{category.category_name}}</option>
               	{% endfor %}
               </select>
+              </div>
               <button type="submit" class="btn btn-default">Submit</button>
             </form>
           </div>
         </div>
       </div>
     </div>
+
+<div id="myModal2" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Edit priority</h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="/app/edit">{% csrf_token %}
+              <input type="hidden" name="taskHiddenId_" id="taskHiddenId_"/>
+              <input type="hidden" name="categoryHiddenId_" id="categoryHiddenId_" 
+              value="{{category.id}}"/>
+              <div class="form-group" style="width:150px">
+                <label for="task_priority">Task priority</label>
+                <select class="form-control" id="task_priority" name="task_priority">
+                  <option value="1" data-icon="fa fa-exclamation">Critical</option>
+                  <option value="2" data-icon="fa fa-ban">Blocker</option>
+                  <option value="3" data-icon="fa fa-exclamation-triangle">Bug</option>
+                  <option value="4" data-icon="fa fa-tasks">Task</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 {% endblock %}

@@ -4,6 +4,16 @@ $(document).ready(function(){
    $('#categoryTable').DataTable();
 
    $('#taskTable').DataTable();
+
+   $('#task_priority').selectpicker({
+      style: 'btn-info',
+      size: 4
+    });
+
+  $('#category').selectpicker({
+      style: 'btn-info',
+      size: 4
+    });
 });
 
 function goBack() {
@@ -30,3 +40,8 @@ function moveTask(taskId){
   $('#myModal1').modal('show'); 
 }
 
+function editTask(taskId,taskPriority){
+  $('#taskHiddenId_').val(taskId);
+  $('#task_priority').val(taskPriority);
+  $('#myModal2').modal('show'); 
+}

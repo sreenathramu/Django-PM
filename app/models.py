@@ -19,6 +19,7 @@ class Tasks(models.Model):
 	task_description = models.CharField(max_length=200)
 	category = models.ForeignKey(Category,on_delete = models.CASCADE,related_name='from_category',)
 	user = models.ForeignKey(User,related_name='from_user',)
+	priority = models.IntegerField()
 	created_date  = models.DateTimeField(default=datetime.now) 
 
 	class Meta:

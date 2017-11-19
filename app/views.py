@@ -18,7 +18,7 @@ def main(request):
 			if form.is_valid():
 				form.save()
 			form =  CategoryAddForm()
-			messages.info(request, 'Category Successfully Added')
+			messages.success(request, 'Category Successfully Added')
 		else:
 			form = CategoryAddForm()
 	except Exception as e:
@@ -32,15 +32,16 @@ def category_get(request,categoryId):
 		user = User.objects.get(username=request.user)
 		category = Category.objects.get(pk=categoryId)
 		tasks = Tasks.objects.filter(category=categoryId,user=user)
-		categoryList = Category.objects.all()
+		categoryList = Category.objects.exclude(pk=categoryId)
 		if request.method == 'POST':
 			task = Tasks()
 			task.task_title = request.POST['task_title'] 
 			task.task_description = request.POST['task_description'] 
 			task.category= category
 			task.user = user
+			task.priority = request.POST['task_priority']
 			task.save()
-			messages.info(request, 'Task Successfully Added')
+			messages.success(request, 'Task Successfully Added')
 	except Exception as e:
 		raise Http404(e)
 	return render(request,'tasks.html',{'task':tasks,'category':category,
@@ -48,21 +49,21 @@ def category_get(request,categoryId):
 		'categoryList':categoryList})
 
 @login_required
-def deleteTask(request,taskId):
+def deleteTask(request,categoryId,taskId):
 	try:
 		task  = Tasks.objects.get(id=taskId)
 		task.delete()
-		messages.info(request, 'Task Successfully Deleted')
+		messages.success(request, 'Task Successfully Deleted')
 	except Exception as e:
 		raise Http404(e)
-	return redirect('getCategory')
+	return redirect('getCategory',categoryId=categoryId)
 
 @login_required
 def deleteCategory(request,categoryId):
 	try:
 		category  = Category.objects.get(id=categoryId)
 		category.delete()
-		messages.info(request, 'Category Successfully Deleted')
+		messages.success(request, 'Category Successfully Deleted')
 	except Exception as e:
 		raise Http404(e)
 	return redirect('home')
@@ -76,8 +77,23 @@ def moveTask(request):
 		taskObj = Tasks.objects.filter(id=taskId)
 		categoryObj = Category.objects.get(pk=categoryId)
 		taskObj.update(category = categoryObj)
-		messages.info(request, 'Task updated Successfully')
+		messages.success(request, 'Task updated Successfully')
 	except Exception as e:
 		raise Http404('e')
+	return redirect('getCategory',categoryId=currentCategoryId)
+
+@login_required
+def editTask(request):
+	try:
+		taskId = request.POST['taskHiddenId_']
+		currentCategoryId = request.POST['categoryHiddenId_']
+		task_priority = request.POST['task_priority']
+		print task_priority,taskId
+		taskObj = Tasks.objects.filter(id=taskId)
+		print taskObj
+		taskObj.update(priority = task_priority)
+		messages.success(request, 'Task updated Successfully')
+	except Exception as e:
+		raise Http404(e)
 	return redirect('getCategory',categoryId=currentCategoryId)
 
