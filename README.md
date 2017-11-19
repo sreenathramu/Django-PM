@@ -1,6 +1,14 @@
 # Django-PM
 Small application that can track tasks in a project.
 
+## Requirements
+- Django 1.11.7
+- Python 2.7.*
+- Install other dependencies from requirments.txt
+
+## Database Backend
+- MySQL
+
 ## Features
 - Users Sign-in and Sign-up
 - Users can create multiple categories like Low, Medium, Priority etc.
