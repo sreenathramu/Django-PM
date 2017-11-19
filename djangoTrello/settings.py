@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'trello',
         'USER': 'root',
-        'PASSWORD': 'Bi2i@1234',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }
