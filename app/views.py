@@ -11,6 +11,9 @@ from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 
+'''
+Main Controller which will display all the categorys 
+'''
 @login_required
 def main(request):	
 	try:
@@ -27,6 +30,9 @@ def main(request):
 	category = Category.objects.all()
 	return render(request,'category.html',{'category':category,'form':form})
 
+'''
+Get Category will get all the tasks related to that category. 
+'''
 @login_required
 def category_get(request,categoryId):
 	try:
@@ -53,6 +59,7 @@ def category_get(request,categoryId):
 		'user':user,
 		'categoryList':categoryList})
 
+''' Delete the specified task provided by the user '''
 @login_required
 def deleteTask(request,categoryId,taskId):
 	try:
@@ -63,6 +70,7 @@ def deleteTask(request,categoryId,taskId):
 		raise Http404(e)
 	return redirect('getCategory',categoryId=categoryId)
 
+''' Delete the specified category provided by the user '''
 @login_required
 def deleteCategory(request,categoryId):
 	try:
@@ -73,6 +81,7 @@ def deleteCategory(request,categoryId):
 		raise Http404(e)
 	return redirect('home')
 
+''' Move the specified task to other category '''
 @login_required
 def moveTask(request):
 	try:
@@ -87,6 +96,7 @@ def moveTask(request):
 		raise Http404('e')
 	return redirect('getCategory',categoryId=currentCategoryId)
 
+''' Edit the priority of the task provided by the user '''
 @login_required
 def editTask(request):
 	try:
