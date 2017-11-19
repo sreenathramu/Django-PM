@@ -9,6 +9,7 @@ from django.forms import inlineformset_factory
 from django.contrib import messages
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required
 def main(request):	
@@ -42,8 +43,12 @@ def category_get(request,categoryId):
 			task.priority = request.POST['task_priority']
 			task.save()
 			messages.success(request, 'Task Successfully Added')
-	except Exception as e:
+	except ObjectDoesNotExist as e:
 		raise Http404(e)
+	except Exception as e:
+		response = render(request, "404.html", {})
+		response.status_code = 500
+		return response
 	return render(request,'tasks.html',{'task':tasks,'category':category,
 		'user':user,
 		'categoryList':categoryList})
